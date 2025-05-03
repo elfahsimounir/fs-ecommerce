@@ -81,7 +81,7 @@ This project is developed in collaboration with **Next-Merce**, leveraging their
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/empoverse.git
+   git clone https://github.com/elfahsimounir/fs-ecommerce.git
    cd empoverse
    ```
 2. Install dependencies:
