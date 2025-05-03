@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      String   @default("user")
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  image       String?
+  products    Product[]
+}
+
+model banner {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  image       String
+  slug        String   @unique
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], name: "ProductBanners")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+}
+
+model Order {
+  id         String         @id @default(cuid())
+  userId     String?
+  total      Float
+  shippingId String         @unique
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  shipping   ShippingDetail @relation(fields: [shippingId], references: [id])
+  user       user?          @relation(fields: [userId], references: [id])
+  products   OrderProduct[]
+}
+
+model OrderProduct {
+  id        String   @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model ShippingDetail {
+  id        String  @id @default(cuid())
+  fullName  String
+  address   String
+  telephone String
+  city      String
+  country   String  @default("Morocco")
+  email     String
+  orderId   String?
+  order     Order?
+}
+
+model Product {
+  id          String         @id @default(cuid())
+  name        String         @unique
+  slug        String         @unique
+  description String
+  price       Float
+  discount    Float?
+  isNew       Boolean        
+  isPublished Boolean        @default(true)
+  image       String?
+  stock       Int
+  categoryId  String
+  brandId     String?
+  rating      Float          @default(0)
+  properties  Json?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @default(now())
+  orders      OrderProduct[]
+  brand       Brand?         @relation(fields: [brandId], references: [id])
+  category    Category       @relation(fields: [categoryId], references: [id])
+  images      ProductImage[]
+  reviews     Review[]
+  hashtags    Hashtag[]      @relation("ProductHashtags")
+  banners     banner[]       @relation("ProductBanners")
+
+  @@unique([id, slug])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  url       String
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Brand {
+  id        String    @id @default(cuid())
+  name      String
+  image     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  content   String
+  rating    Int
+  email     String
+  fullName  String
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Hashtag {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  image       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+  products    Product[] @relation("ProductHashtags")
+
+  @@unique([id, name])
+}
