@@ -118,6 +118,5 @@ We welcome contributions! Please fork the repository and submit a pull request w
 
 ---
 
-## 📄 License
+Copyright © 2025 Mounir Elfahsi. This project and its content are the intellectual property of the author. All rights reserved.
 
-This project is licensed under the MIT License. See the LICENSE file for details.
